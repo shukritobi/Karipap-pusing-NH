@@ -4,7 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "bundle/**"
+      - "index.html"
+      - "solution.html"
+      - "dashboard.html"
+      - "payment-status.html"
+      - "assets/**"
+      - ".nojekyll"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -27,16 +32,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Rebuild website source
+      - name: Prepare current website
         shell: bash
         run: |
           set -euo pipefail
           rm -rf dist
           mkdir -p dist
-          cat bundle/part-* | base64 --decode | tar -xz -C dist
+          cp index.html solution.html dashboard.html payment-status.html dist/
+          cp -R assets dist/assets
+          touch dist/.nojekyll
           test -f dist/index.html
-          test -f dist/assets/styles.css
-          test -f dist/assets/app.js
+          test -f dist/assets/logo.js
+          test -f dist/assets/hero.js
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
